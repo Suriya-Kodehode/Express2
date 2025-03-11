@@ -36,6 +36,22 @@ export const loginUser = async(email) => {
     
 }
 
+export const qUpdateUser = async (email, firstName, lastName, id) => {
+    try {
+        const [updateUserQuery] = await db.query(
+            `UPDATE t_Users SET Email = :email, firstName = :firstName, lastName = :lastName WHERE UserID = :id`,
+            {
+                replacements: { email, firstName, lastName, id },
+                type: db.QueryTypes.UPDATE,
+            }
+        )
+        return updateUserQuery;
+    } catch (error) {
+        console.error('Error updating user:', error)
+        throw error
+    }
+}
+
 export const getAllFacts = async () => {
 
     try {
@@ -82,3 +98,4 @@ export const addFact = async({Facts}) => {
         console.error('Error adding fact:', error);
     }
 }
+

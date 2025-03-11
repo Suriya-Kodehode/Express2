@@ -1,17 +1,17 @@
-import {getUsers as users} from './getUsers.js'
+import {getUsers} from './getUsers.js'
+import { qUpdateUser } from '../util/dbQueries.js';
 
-export const updateUser = (req, res, next) => {
+export const updateUser = async (req, res, next) => {
     const { id } = req.params;
-    const { name } = req.body;
-    
-    if (!name) {
-        return res.status(400).json({message:'Name is requied'});
-    }
+    const { email, firstName, lastName } = req.body;
 
-    const user = users.find(user => user.id === parseInt(id));
-    if (user) {
-        user.name = name;
-        return res.status(200).json(user);
+    try {
+        const result = await qUpdateUser(email, firstName, lastName, id)
+        if (result) {
+          return res.status(200).json({ message: 'User updated' });
+        }
+        return res.status(404).json({ message: `User ID ${id} not found` });
+    } catch (err) {
+        return res.status(500).json({ message: 'Error updating user infomation' })
     }
-    return res.status(404).json({message:'User not found'});
 }
